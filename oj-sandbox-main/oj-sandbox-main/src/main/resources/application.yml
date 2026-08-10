@@ -1,0 +1,16 @@
+server:
+  port: 8090
+#spring:
+#  datasource:
+#    password: YOUR_MYSQL_PASSWORD
+codesandbox:
+  registry:
+    # 可选镜像前缀。留空则走 Docker daemon 的 registry-mirrors；填则作为镜像名前缀（如 docker.m.daocloud.io）
+    mirror: ""
+    # 单次拉取镜像超时（毫秒）
+    pull-timeout: 60000
+  prewarm:
+    # 启动时后台预拉全部语言镜像
+    enabled: true
+    # 单个镜像预拉超时（毫秒）
+    timeout: 300000

@@ -1,0 +1,64 @@
+# 公共配置文件
+#
+spring:
+  application:
+    name: oj-backend-rag-service
+  # 默认 dev 环境
+  profiles:
+    active: dev
+  # RAG 服务不连 MySQL（依赖 Qdrant + LLM），排除父 POM 全局引入的 JDBC 数据源自动配置
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+  # 支持 swagger3
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  # session 配置
+  session:
+    store-type: redis
+    # 30 天过期
+    timeout: 2592000
+  # Redis 配置
+  redis:
+    database: 1
+    host: localhost
+    port: 6379
+    timeout: 5000
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+server:
+  address: 0.0.0.0
+  port: 8105
+  servlet:
+    context-path: /api/rag
+    # cookie 30 天过期
+    session:
+      cookie:
+        max-age: 2592000
+        path: /api
+# RAG 配置
+oj:
+  rag:
+    # Qdrant 向量库配置
+    qdrant:
+      host: localhost
+      port: 6333
+      collection-name: question_knowledge
+      dimension: 1024 # 与 embedding 模型维度对齐（智谱 embedding-2=1024）
+    # 大模型服务配置（智谱 GLM，OpenAI 兼容接口）
+    llm:
+      base-url: https://open.bigmodel.cn/api/paas/v4
+      chat-model: glm-4-flash
+      embedding-model: embedding-2
+      api-key: YOUR_ZHIPU_API_KEY
+      timeout: 60000
+    # 检索配置
+    search:
+      top-k: 5
+      # embedding-2 模型相似度普遍偏低，0.5 会过滤掉短关键词的精确命中（实测两数之和 0.48），故降到 0.3
+      similarity-threshold: 0.3
+knife4j:
+  enable: true
